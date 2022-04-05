@@ -316,7 +316,8 @@ function random(min, max) {
 
     const starCountRef = ref(db, '/sharedSpace/' + uid);
     onValue(starCountRef, (snapshot) => {
-
+      const msgerChat = get(".msger-chat");
+      msgerChat.innerHTML="";
       const data = snapshot.val();
       const objects = JSON.parse(JSON.stringify(data));
       Object.entries(objects).forEach(object => {
