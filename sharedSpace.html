@@ -1,10 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">  
+<!-- Add icon library -->
+<script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+<link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+<script src="https://kit.fontawesome.com/e094b04963.js" crossorigin="anonymous"></script>
 	<title></title>
 	<style type="text/css">
+
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;600&display=swap');
+
+    .btn {
+      background-color: DodgerBlue;
+      border: none;
+      color: white;
+      padding: 12px 16px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Darker background on mouse-over */
+    .btn:hover {
+      background-color: RoyalBlue;
+    }
+
+.avatarSpan {
+  vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 50px;
+}
+
 		:root {
   --body-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   --msger-bg: #fff;
@@ -31,7 +61,7 @@ body {
   align-items: center;
   height: 100vh;
   background-image: var(--body-bg);
-  font-family: Helvetica, sans-serif;
+  font-family: 'Comfortaa', cursive;
 }
 
 .msger {
@@ -55,6 +85,10 @@ body {
   border-bottom: var(--border);
   background: #eee;
   color: #666;
+}
+
+.msger-header-title{
+  line-height: 50px;height: 50px;
 }
 
 .msger-chat {
@@ -100,10 +134,6 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-}
-.msg-info-name {
-  margin-right: 10px;
-  font-weight: bold;
 }
 .msg-info-time {
   font-size: 0.85em;
@@ -160,31 +190,22 @@ body {
 
 	</style>
 </head>
-<body>
+<body>  
 <section class="msger">
   <header class="msger-header">
-    <div class="msger-header-title">
-      <i class="fas fa-comment-alt"></i> UpSwing Shared Space
+    <div id="headTitle" class="msger-header-title">
+       UpSwing Shared Space
     </div>
-    <div class="msger-header-options">
-      <span><i class="fas fa-cog"></i></span>
+    <div class="msger-header-options">    
+      <span id="avatarSpan"><i class="fa-solid fa-user avatarSpan"></i></span>
     </div>
   </header>
-
   <main class="msger-chat"> 
-
-    <div class="msg right-msg">
-      <div
-       class="msg-img"
-       style="background-image: url(https://image.flaticon.com/icons/svg/145/145867.svg)"
-      ></div>
-
+    <div class="msg right-msg">    
       <div class="msg-bubble">
-        <div class="msg-info">
-          <div class="msg-info-name">You</div>
+        <div class="msg-info">          
           <div class="msg-info-time">12:46</div>
         </div>
-
         <div class="msg-text">
           You can change your name in JS section!
         </div>
@@ -197,25 +218,10 @@ body {
     <button type="submit" class="msger-send-btn">Send</button>
   </form>
 </section>
-
 <script type="text/javascript">
 	const msgerForm = get(".msger-inputarea");
 const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
-
-/*const BOT_MSGS = [
-  "Hi, how are you?",
-  "Ohh... I can't understand what you trying to say. Sorry!",
-  "I like to play games... But I don't know how to play!",
-  "Sorry if my answers are not relevant. :))",
-  "I feel sleepy! :("
-];*/
-
-// Icons made by Freepik from www.flaticon.com
-//const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
-const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
-//const BOT_NAME = "BOT";
-const PERSON_NAME = "You";
 
 msgerForm.addEventListener("submit", event => {
   event.preventDefault();
@@ -223,22 +229,23 @@ msgerForm.addEventListener("submit", event => {
   const msgText = msgerInput.value;
   if (!msgText) return;
 
-  appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
+  var today = new Date();
+  var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  var dateTime = date+' '+time;
+  appendMessage(dateTime, msgText);
   msgerInput.value = "";
 
-  botResponse();
 });
 
-function appendMessage(name, img, side, text) {
+function appendMessage(date, text) {
   //   Simple solution for small apps
   const msgHTML = `
-    <div class="msg ${side}-msg">
-      <div class="msg-img" style="background-image: url(${img})"></div>
-
+    <div class="msg right-msg">
+      
       <div class="msg-bubble">
-        <div class="msg-info">
-          <div class="msg-info-name">${name}</div>
-          <div class="msg-info-time">${formatDate(new Date())}</div>
+        <div class="msg-info">         
+          <div class="msg-info-time">${date}</div>
         </div>
 
         <div class="msg-text">${text}</div>
@@ -249,16 +256,6 @@ function appendMessage(name, img, side, text) {
   msgerChat.insertAdjacentHTML("beforeend", msgHTML);
   msgerChat.scrollTop += 500;
 }
-
-/*function botResponse() {
-  const r = random(0, BOT_MSGS.length - 1);
-  const msgText = BOT_MSGS[r];
-  const delay = msgText.split(" ").length * 100;
-
-  setTimeout(() => {
-    appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
-  }, delay);
-}*/
 
 // Utils
 function get(selector, root = document) {
@@ -275,6 +272,117 @@ function formatDate(date) {
 function random(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
+
+</script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
+  import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+  import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app-check.js";
+
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBYAxZZIgvcv9LY3tbNJJrRpNpXYoExSZs",
+    authDomain: "selfmanagement1902.firebaseapp.com",
+    databaseURL: "https://selfmanagement1902-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "selfmanagement1902",
+    storageBucket: "selfmanagement1902.appspot.com",
+    messagingSenderId: "997640913248",
+    appId: "1:997640913248:web:a8f9a230418ab226a7de05",
+    measurementId: "G-N97PT3Z84S"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider('6Lctu0ofAAAAAHFJxE8A6IpS6eTomq6F2wGABAwf'),
+
+    // Optional argument. If true, the SDK automatically refreshes App Check
+    // tokens as needed.
+    isTokenAutoRefreshEnabled: true
+  });
+
+  const db = getDatabase(app);
+  const analytics = getAnalytics(app);  
+  const provider = new GoogleAuthProvider();
+  const auth = getAuth();
+
+
+  onAuthStateChanged(auth, (user) => {
+  if (user) {
+  const uid = user.uid;
+  const displayName = user.displayName;  
+  const photoURL = user.photoURL;  
+  document.getElementById("avatarSpan").innerHTML="<img src='"+photoURL+"' alt='Avatar' class='avatarSpan'>";
+  document.getElementById("headTitle").innerHTML=displayName+'\'s Shared Space';  
+
+    const starCountRef = ref(db, '/sharedSpace/' + uid);
+    onValue(starCountRef, (snapshot) => {
+
+      const data = snapshot.val();
+      const objects = JSON.parse(JSON.stringify(data));
+      Object.entries(objects).forEach(object => {
+  // key: student[0]
+  // value: student[1]
+  console.log(`Date: ${object[0]} value: ${object[1].text} `);
+
+  var date = new Date(object[0] * 1000);
+// Hours part from the timestamp
+var hours = date.getHours();
+// Minutes part from the timestamp
+var minutes = "0" + date.getMinutes();
+// Seconds part from the timestamp
+var seconds = "0" + date.getSeconds();
+
+// Will display time in 10:30:23 format
+var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + ', '+date;
+
+
+  appendMessage(formattedTime, object[1].text);
+});            
+      //updateStarCount(postElement, data);
+    });
+
+
+  } else {
+    console.log('User not logged in! Redirecting...');
+    signInWithRedirect(auth, provider);
+  }
+});
+ 
+/*
+function showLogin(){
+    // Initialize the FirebaseUI Widget using Firebase.
+  const GoogleAuth = new firebase.auth.GoogleAuthProvider();
+  //To sign in with redirect. 
+  firebase.auth().signInWithRedirect(googleAuth);
+
+  var ui = new firebaseui.auth.AuthUI(firebase.auth());
+  ui.start('#firebaseui-auth-container', {
+  signInOptions: [
+    {
+      provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      scopes: [
+        'https://www.googleapis.com/auth/contacts.readonly'
+      ],
+      customParameters: {
+        // Forces account selection even when one account
+        // is available.
+        prompt: 'select_account'
+      }
+    },
+  ]
+});
+}*/
+
+
 
 </script>
 </body>
