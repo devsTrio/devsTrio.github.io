@@ -205,7 +205,7 @@
   <main class="msger-chat">     
   </main>
 
-  <form class="msger-inputarea">
+  <form onsubmit="updateField('','title', this.value)" class="msger-inputarea">
     <input type="text" class="msger-input" placeholder="Enter your message...">
     <button type="submit" class="msger-send-btn">Send</button>
   </form>
@@ -258,24 +258,13 @@ function get(selector, root = document) {
   return root.querySelector(selector);
 }
 
-function formatDate(date) {
-  const h = "0" + date.getHours();
-  const m = "0" + date.getMinutes();
-
-  return `${h.slice(-2)}:${m.slice(-2)}`;
-}
-
-function random(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
-}
-
 </script>
 <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
-  import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+  import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";  
+  import { getDatabase, ref, onValue, update , push, get, set } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
   import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app-check.js";
 
   // TODO: Add SDKs for Firebase products that you want to use
@@ -308,11 +297,12 @@ function random(min, max) {
   const analytics = getAnalytics(app);  
   const provider = new GoogleAuthProvider();
   const auth = getAuth();
+  var uid;
 
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      const uid = user.uid;
+      uid = user.uid;
       const displayName = user.displayName;  
       const photoURL = user.photoURL;
       document.getElementById("avatarSpan").innerHTML="<img src='"+photoURL+"' alt='Avatar' class='avatarSpan'>";
@@ -338,6 +328,18 @@ function random(min, max) {
       signInWithRedirect(auth, provider);
     }
   });
+
+
+  window.updateField=function(data){          
+    event.preventDefault();
+    var obj = {};  
+    const now = Date.now();   
+    obj[now] = {
+      text: data,
+      type: 'text'
+    };
+    update(ref(db, '/sharedSpace/' + uid), obj);
+  }
 
 </script>
 </body>
