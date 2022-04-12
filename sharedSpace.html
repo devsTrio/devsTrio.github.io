@@ -205,8 +205,8 @@
   <main class="msger-chat">     
   </main>
 
-  <form class="msger-inputarea">
-    <input type="text" class="msger-input" placeholder="Enter your message...">
+  <form onsubmit="updateField()" class="msger-inputarea">
+    <input type="text" id="messageBox" class="msger-input" placeholder="Enter your message...">
     <button type="submit" class="msger-send-btn">Send</button>
   </form>
 </section>
@@ -322,6 +322,23 @@ function getTheValue(selector, root = document) {
       signInWithRedirect(auth, provider);
     }
   });
+
+
+    window.updateField=function(){          
+
+      var data=document.getElementById('messageBox').value;
+      if(data!='' || data!=null){
+        event.preventDefault();
+      var obj = {};  
+      const now = Date.now();   
+      obj[now] = {
+        text: data,
+        type: 'text'
+      };
+      update(ref(db, '/sharedSpace/' + uid), obj);
+      }  
+  }
+
 
 </script>
 </body>
