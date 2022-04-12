@@ -205,7 +205,7 @@
   <main class="msger-chat">     
   </main>
 
-  <form onsubmit="updateField()" class="msger-inputarea">
+  <form autocomplete="off" onsubmit="updateField()" class="msger-inputarea">
     <input type="text" id="messageBox" class="msger-input" placeholder="Enter your message...">
     <button type="submit" class="msger-send-btn">Send</button>
   </form>
@@ -214,25 +214,6 @@
   const msgerForm = getTheValue(".msger-inputarea");
   const msgerInput = getTheValue(".msger-input");
   const msgerChat = getTheValue(".msger-chat");
-
-/*  msgerForm.addEventListener("submit", event => {
-    event.preventDefault();
-
-    const msgText = msgerInput.value;
-    if (!msgText) return;
-
-    var today = new Date();
-    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    var date = new Date();
-    var hours = date.getHours();
-    var minutes = "0" + date.getMinutes();
-    var fomratteddate=date.toLocaleDateString('en-us', { weekday:"long", month:"short", day:"numeric"}); 
-    var formattedTime = hours + ':' + minutes.substr(-2) + ' '+fomratteddate;
-
-    appendMessage(formattedTime, msgText);
-    msgerInput.value = "";
-
-  });*/
 
   function appendMessage(date, text) {
   //   Simple solution for small apps
@@ -245,6 +226,25 @@
   </div>
 
   <div class="msg-text">${text}</div>
+  </div>
+  </div>
+  `;
+
+  msgerChat.insertAdjacentHTML("beforeend", msgHTML);
+  msgerChat.scrollTop += 500;
+}
+
+ function appendImage(date, img) {
+  //   Simple solution for small apps
+  const msgHTML = `
+  <div class="msg right-msg">
+
+  <div class="msg-bubble">
+  <div class="msg-info">         
+  <div class="msg-info-time">${date}</div>
+  </div>
+
+  <img class="msg-text" width="300" src="${img}">
   </div>
   </div>
   `;
@@ -315,7 +315,13 @@ function getTheValue(selector, root = document) {
           var minutes = "0" + date.getMinutes();
           var fomratteddate=date.toLocaleDateString('en-us', { weekday:"long", month:"short", day:"numeric"}); 
           var formattedTime = hours + ':' + minutes.substr(-2) + ' '+fomratteddate;
-          appendMessage(formattedTime, object[1].text);
+          if(object[1].type=='text'){
+            appendMessage(formattedTime, object[1].text);
+          }
+          else if(object[1].type=='image'){
+            appendImage(formattedTime, object[1].url);
+          }
+
         });            
       //updateStarCount(postElement, data);
     });
@@ -328,6 +334,7 @@ function getTheValue(selector, root = document) {
     window.updateField=function(){          
 
       var data=document.getElementById('messageBox').value;
+      document.getElementById('messageBox').value='';
       if(data!='' || data!=null){
         event.preventDefault();
       var obj = {};  
@@ -336,8 +343,7 @@ function getTheValue(selector, root = document) {
         text: data,
         type: 'text'
       };
-      update(ref(db, '/sharedSpace/' + uid), obj);
-      data.value = "";
+      update(ref(db, '/sharedSpace/' + uid), obj);      
       }  
   }
 
