@@ -215,7 +215,7 @@
   const msgerInput = getTheValue(".msger-input");
   const msgerChat = getTheValue(".msger-chat");
 
-  msgerForm.addEventListener("submit", event => {
+/*  msgerForm.addEventListener("submit", event => {
     event.preventDefault();
 
     const msgText = msgerInput.value;
@@ -232,7 +232,7 @@
     appendMessage(formattedTime, msgText);
     msgerInput.value = "";
 
-  });
+  });*/
 
   function appendMessage(date, text) {
   //   Simple solution for small apps
@@ -280,6 +280,7 @@ function getTheValue(selector, root = document) {
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
+  self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
   const appCheck = initializeAppCheck(app, {
     provider: new ReCaptchaV3Provider('6Lctu0ofAAAAAHFJxE8A6IpS6eTomq6F2wGABAwf'),
 
@@ -292,11 +293,11 @@ function getTheValue(selector, root = document) {
   const analytics = getAnalytics(app);  
   const provider = new GoogleAuthProvider();
   const auth = getAuth();
-
+  var uid;
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      const uid = user.uid;
+      uid = user.uid;
       const displayName = user.displayName;  
       const photoURL = user.photoURL;
       document.getElementById("avatarSpan").innerHTML="<img src='"+photoURL+"' alt='Avatar' class='avatarSpan'>";
@@ -309,7 +310,7 @@ function getTheValue(selector, root = document) {
         const data = snapshot.val();
         const objects = JSON.parse(JSON.stringify(data));
         Object.entries(objects).forEach(object => {
-          var date = new Date(object[0] * 1000);
+          var date = new Date(parseInt(object[0]));
           var hours = date.getHours();
           var minutes = "0" + date.getMinutes();
           var fomratteddate=date.toLocaleDateString('en-us', { weekday:"long", month:"short", day:"numeric"}); 
@@ -336,6 +337,7 @@ function getTheValue(selector, root = document) {
         type: 'text'
       };
       update(ref(db, '/sharedSpace/' + uid), obj);
+      data.value = "";
       }  
   }
 
