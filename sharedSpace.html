@@ -253,6 +253,26 @@
   msgerChat.scrollTop += 500;
 }
 
+ function appendFile(date, title, link) {
+  //   Simple solution for small apps
+  const msgHTML = `
+  <div class="msg right-msg">
+
+  <div class="msg-bubble">
+  <div class="msg-info">         
+  <div class="msg-info-time">${date}</div>
+  </div>
+  <a class="msg-text" href="${link}">
+  ${title}
+  </a>
+  </div>
+  </div>
+  `;
+
+  msgerChat.insertAdjacentHTML("beforeend", msgHTML);
+  msgerChat.scrollTop += 500;
+}
+
 // Utils
 function getTheValue(selector, root = document) {
   return root.querySelector(selector);
@@ -320,6 +340,9 @@ function getTheValue(selector, root = document) {
           }
           else if(object[1].type=='image'){
             appendImage(formattedTime, object[1].url);
+          }
+          else{
+            appendFile(formattedTime, object[1].fileName, object[1].url);
           }
 
         });            
